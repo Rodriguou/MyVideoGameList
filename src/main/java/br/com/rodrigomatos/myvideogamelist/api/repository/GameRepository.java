@@ -12,5 +12,5 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     List<Game> findByNameContainingIgnoreCase(String name, Sort sort);
 
     @Query("SELECT g FROM Game g WHERE YEAR(g.releaseDate) = :year")
-    List<Game> findByReleaseYear(@Param("year") int year, Sort sort);
+    List<Game> findByReleaseYear(@Param("year") Integer year, Sort sort);
 }
