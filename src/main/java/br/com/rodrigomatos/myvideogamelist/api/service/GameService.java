@@ -32,7 +32,7 @@ public class GameService {
         return gameRepository.findByNameContainingIgnoreCase(name, sort);
     }
 
-    public List<Game> getGamesByReleaseYear(int year) {
+    public List<Game> getGamesByReleaseYear(Integer year) {
         Sort sort = Sort.by("releaseDate").ascending();
         return gameRepository.findByReleaseYear(year, sort);
     }
