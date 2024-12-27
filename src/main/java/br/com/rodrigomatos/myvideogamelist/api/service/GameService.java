@@ -1,6 +1,7 @@
 package br.com.rodrigomatos.myvideogamelist.api.service;
 
 import br.com.rodrigomatos.myvideogamelist.api.entity.Game;
+import br.com.rodrigomatos.myvideogamelist.api.exception.NotFoundException;
 import br.com.rodrigomatos.myvideogamelist.api.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -38,13 +39,18 @@ public class GameService {
     }
 
     public Game editGame(Long id, Game updatedGame) {
-        Game existingGame = gameRepository.findById(id).orElseThrow();
+        Game existingGame = verifyGameExists(id);
         existingGame.setName(updatedGame.getName());
         existingGame.setReleaseDate(updatedGame.getReleaseDate());
         return gameRepository.save(existingGame);
     }
 
     public void deleteGame(Long id) {
+        verifyGameExists(id);
         gameRepository.deleteById(id);
+    }
+
+    public Game verifyGameExists(Long id) {
+        return gameRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 }
