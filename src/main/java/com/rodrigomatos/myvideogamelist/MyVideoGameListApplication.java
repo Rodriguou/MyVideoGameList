@@ -1,4 +1,4 @@
-package br.com.rodrigomatos.myvideogamelist.api;
+package com.rodrigomatos.myvideogamelist;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
