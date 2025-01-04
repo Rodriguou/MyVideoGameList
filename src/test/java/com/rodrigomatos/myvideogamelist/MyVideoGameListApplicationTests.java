@@ -1,4 +1,4 @@
-package br.com.rodrigomatos.myvideogamelist.api;
+package com.rodrigomatos.myvideogamelist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
