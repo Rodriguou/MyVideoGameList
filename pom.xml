@@ -8,7 +8,7 @@
 		<version>3.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.rodrigomatos</groupId>
+	<groupId>com.rodrigomatos</groupId>
 	<artifactId>myvideogamelist</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MyVideoGameList</name>
