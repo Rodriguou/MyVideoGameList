@@ -2,10 +2,12 @@ package com.rodrigomatos.myvideogamelist.service;
 
 import com.rodrigomatos.myvideogamelist.dto.GameDTO;
 import com.rodrigomatos.myvideogamelist.entity.Game;
+import com.rodrigomatos.myvideogamelist.repository.GameListRepository;
 import com.rodrigomatos.myvideogamelist.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GameService {
     private final GameRepository gameRepository;
+    private final GameListRepository gameListRepository;
 
     public GameDTO addGame(GameDTO gameDTO) {
         Game game = new Game(gameDTO.name().trim(), gameDTO.releaseDate());
@@ -38,7 +41,7 @@ public class GameService {
         );
     }
 
-    public List<GameDTO> searchGamesByName(String name) {
+    public List<GameDTO> findGamesByName(String name) {
         return convertToDTOList(
                 gameRepository.findByNameContainingIgnoreCase(
                         name,
@@ -69,7 +72,9 @@ public class GameService {
         return new GameDTO(game.getId(), game.getName(), game.getReleaseDate());
     }
 
+    @Transactional
     public void deleteGame(Long id) {
+        gameListRepository.deleteByGameId(id);
         Game game = gameRepository.findById(id).orElseThrow();
         gameRepository.delete(game);
     }
