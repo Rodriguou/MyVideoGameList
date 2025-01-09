@@ -1,6 +1,5 @@
 package com.rodrigomatos.myvideogamelist.exception;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -63,18 +62,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(DataIntegrityViolationException ex) {
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(ConflictException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
+        errors.put("request body", ex.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
-                "The request could not be processed due to a database integrity issue.",
+                "A conflict occurred while processing your request.",
                 errors
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException() {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("request", "The request contains invalid data.");
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Invalid request.",
+                errors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 }
