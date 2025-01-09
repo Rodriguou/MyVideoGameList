@@ -79,8 +79,8 @@ public class GameListService {
     }
 
     public void removeGameFromList(Long id) {
-        GameList gameList = gameListRepository.findById(id).orElseThrow();
-        gameListRepository.deleteById(id);
+        GameList game = gameListRepository.findById(id).orElseThrow();
+        gameListRepository.delete(game);
     }
 
     private List<GameListDTO> convertToDTOList(List<GameList> gameList) {
