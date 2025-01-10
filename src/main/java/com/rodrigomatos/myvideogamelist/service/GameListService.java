@@ -54,6 +54,15 @@ public class GameListService {
         );
     }
 
+    public List<GameListDTO> getGameListByReleaseYear(int year) {
+        return convertToDTOList(
+                gameListRepository.findByGameReleaseYear(
+                        year,
+                        Sort.by(Sort.Order.asc("game.releaseDate"), Sort.Order.asc("game.name"))
+                )
+        );
+    }
+
     public List<GameListDTO> getGameListByStatus(GameStatus status) {
         return convertToDTOList(
                 gameListRepository.findByStatus(status)
