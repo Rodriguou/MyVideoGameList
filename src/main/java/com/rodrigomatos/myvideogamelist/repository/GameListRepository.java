@@ -17,6 +17,9 @@ public interface GameListRepository extends JpaRepository<GameList, Long> {
 
     List<GameList> findByGameNameContainingIgnoreCase(String name, Sort sort);
 
+    @Query("SELECT gl FROM GameList gl WHERE YEAR(gl.game.releaseDate) = :year")
+    List<GameList> findByGameReleaseYear(int year, Sort sort);
+
     List<GameList> findByStatus(GameStatus status);
 
 }
