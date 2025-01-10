@@ -41,6 +41,12 @@ public class GameListController {
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
+    @GetMapping("year/{year}")
+    public ResponseEntity<List<GameListDTO>> getGameListByReleaseYear(@PathVariable("year") int year) {
+        List<GameListDTO> gameList = gameListService.getGameListByReleaseYear(year);
+        return new ResponseEntity<>(gameList, HttpStatus.OK);
+    }
+
     @GetMapping("status/{status}")
     public ResponseEntity<List<GameListDTO>> getGameListByStatus(@PathVariable("status") String status) {
         List<GameListDTO> gameList = gameListService.getGameListByStatus(GameStatus.valueOf(status.toUpperCase()));
