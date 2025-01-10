@@ -11,8 +11,6 @@ import java.util.List;
 
 public interface GameListRepository extends JpaRepository<GameList, Long> {
 
-    boolean existsByGameId(Long gameId);
-
     @Modifying
     @Query("DELETE FROM GameList gl WHERE gl.game.id = :gameId")
     void deleteByGameId(Long gameId);
