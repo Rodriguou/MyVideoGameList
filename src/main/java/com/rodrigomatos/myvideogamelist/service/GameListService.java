@@ -4,7 +4,6 @@ import com.rodrigomatos.myvideogamelist.dto.GameListDTO;
 import com.rodrigomatos.myvideogamelist.entity.Game;
 import com.rodrigomatos.myvideogamelist.entity.GameList;
 import com.rodrigomatos.myvideogamelist.entity.GameStatus;
-import com.rodrigomatos.myvideogamelist.exception.ConflictException;
 import com.rodrigomatos.myvideogamelist.repository.GameListRepository;
 import com.rodrigomatos.myvideogamelist.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +19,6 @@ public class GameListService {
     private final GameRepository gameRepository;
 
     public GameListDTO addGameToList(GameListDTO gameListDTO) {
-        if (gameListRepository.existsByGameId(gameListDTO.gameId())) {
-            throw new ConflictException("This game is already in your list");
-        }
-
         Game game = gameRepository.findById(gameListDTO.gameId()).orElseThrow();
 
         GameList gameList = new GameList(game, GameStatus.PENDING);
