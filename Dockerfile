@@ -7,7 +7,7 @@ COPY src src
 
 RUN mvn package -DskipTests
 
-FROM openjdk:21-oracle
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
