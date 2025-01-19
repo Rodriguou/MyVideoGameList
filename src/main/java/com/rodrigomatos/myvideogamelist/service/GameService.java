@@ -47,7 +47,10 @@ public class GameService {
         return gameMapper.toDTOList(
                 gameRepository.findByNameContainingIgnoreCase(
                         name,
-                        Sort.by(Sort.Order.asc("name"), Sort.Order.asc("releaseDate"))
+                        Sort.by(
+                                Sort.Order.asc("name"),
+                                Sort.Order.asc("releaseDate")
+                        )
                 )
         );
     }
@@ -56,7 +59,10 @@ public class GameService {
         return gameMapper.toDTOList(
                 gameRepository.findByReleaseYear(
                         year,
-                        Sort.by(Sort.Order.asc("releaseDate"), Sort.Order.asc("name"))
+                        Sort.by(
+                                Sort.Order.asc("releaseDate"),
+                                Sort.Order.asc("name")
+                        )
                 )
         );
     }
