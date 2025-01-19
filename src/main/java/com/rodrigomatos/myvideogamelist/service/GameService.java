@@ -2,6 +2,7 @@ package com.rodrigomatos.myvideogamelist.service;
 
 import com.rodrigomatos.myvideogamelist.dto.GameDTO;
 import com.rodrigomatos.myvideogamelist.entity.Game;
+import com.rodrigomatos.myvideogamelist.mapper.GameMapper;
 import com.rodrigomatos.myvideogamelist.repository.GameListRepository;
 import com.rodrigomatos.myvideogamelist.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,16 @@ import java.util.List;
 public class GameService {
     private final GameRepository gameRepository;
     private final GameListRepository gameListRepository;
+    private final GameMapper gameMapper;
 
     public GameDTO addGame(GameDTO gameDTO) {
-        Game game = new Game(gameDTO.name().trim(), gameDTO.releaseDate());
+        Game game = gameMapper.toEntity(gameDTO);
         game = gameRepository.save(game);
-        return new GameDTO(game.getId(), game.getName(), game.getReleaseDate());
+        return gameMapper.toDTO(game);
     }
 
     public List<GameDTO> getAllGamesSortedByName() {
-        return convertToDTOList(
+        return gameMapper.toDTOList(
                 gameRepository.findAll(Sort.by(
                         Sort.Order.asc("name"),
                         Sort.Order.asc("releaseDate")
@@ -33,7 +35,7 @@ public class GameService {
     }
 
     public List<GameDTO> getAllGamesSortedByReleaseDate() {
-        return convertToDTOList(
+        return gameMapper.toDTOList(
                 gameRepository.findAll(Sort.by(
                         Sort.Order.asc("releaseDate"),
                         Sort.Order.asc("name")
@@ -42,7 +44,7 @@ public class GameService {
     }
 
     public List<GameDTO> findGamesByName(String name) {
-        return convertToDTOList(
+        return gameMapper.toDTOList(
                 gameRepository.findByNameContainingIgnoreCase(
                         name,
                         Sort.by(Sort.Order.asc("name"), Sort.Order.asc("releaseDate"))
@@ -51,7 +53,7 @@ public class GameService {
     }
 
     public List<GameDTO> getGamesByReleaseYear(int year) {
-        return convertToDTOList(
+        return gameMapper.toDTOList(
                 gameRepository.findByReleaseYear(
                         year,
                         Sort.by(Sort.Order.asc("releaseDate"), Sort.Order.asc("name"))
@@ -61,7 +63,7 @@ public class GameService {
 
     public GameDTO getGameById(Long id) {
         Game game = gameRepository.findById(id).orElseThrow();
-        return new GameDTO(game.getId(), game.getName(), game.getReleaseDate());
+        return gameMapper.toDTO(game);
     }
 
     public GameDTO updateGame(Long id, GameDTO gameDTO) {
@@ -69,7 +71,7 @@ public class GameService {
         game.setName(gameDTO.name().trim());
         game.setReleaseDate(gameDTO.releaseDate());
         game = gameRepository.save(game);
-        return new GameDTO(game.getId(), game.getName(), game.getReleaseDate());
+        return gameMapper.toDTO(game);
     }
 
     @Transactional
@@ -77,12 +79,6 @@ public class GameService {
         gameListRepository.deleteByGameId(id);
         Game game = gameRepository.findById(id).orElseThrow();
         gameRepository.delete(game);
-    }
-
-    private List<GameDTO> convertToDTOList(List<Game> games) {
-        return games.stream()
-                .map(game -> new GameDTO(game.getId(), game.getName(), game.getReleaseDate()))
-                .toList();
     }
 
 }
