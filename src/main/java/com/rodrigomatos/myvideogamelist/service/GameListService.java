@@ -49,7 +49,10 @@ public class GameListService {
         return convertToDTOList(
                 gameListRepository.findByGameNameContainingIgnoreCase(
                         name,
-                        Sort.by(Sort.Order.asc("game.name"), Sort.Order.asc("game.releaseDate"))
+                        Sort.by(
+                                Sort.Order.asc("game.name"),
+                                Sort.Order.asc("game.releaseDate")
+                        )
                 )
         );
     }
@@ -58,7 +61,10 @@ public class GameListService {
         return convertToDTOList(
                 gameListRepository.findByGameReleaseYear(
                         year,
-                        Sort.by(Sort.Order.asc("game.releaseDate"), Sort.Order.asc("game.name"))
+                        Sort.by(
+                                Sort.Order.asc("game.releaseDate"),
+                                Sort.Order.asc("game.name")
+                        )
                 )
         );
     }
