@@ -22,10 +22,4 @@ public class Game {
 
     @Column(nullable = false)
     private LocalDate releaseDate;
-
-    public Game(String name, LocalDate releaseDate) {
-        this.name = name;
-        this.releaseDate = releaseDate;
-    }
-
 }
