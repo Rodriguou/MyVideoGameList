@@ -7,7 +7,15 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record GameDTO(@Schema(accessMode = Schema.AccessMode.READ_ONLY) Long id,
-                      @NotBlank(message = "Name is required") @Size(max = 100, message = "Name must be at most 100 characters") String name,
-                      @NotNull(message = "Release date is required") LocalDate releaseDate) {
+public record GameDTO(
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Long id,
+
+        @NotBlank(message = "Name is required")
+        @Size(max = 100, message = "Name must be at most 100 characters")
+        String name,
+
+        @NotNull(message = "Release date is required")
+        LocalDate releaseDate
+) {
 }
