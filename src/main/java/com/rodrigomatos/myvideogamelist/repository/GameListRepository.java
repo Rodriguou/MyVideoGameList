@@ -20,6 +20,6 @@ public interface GameListRepository extends JpaRepository<GameList, Long> {
     @Query("SELECT gl FROM GameList gl WHERE YEAR(gl.game.releaseDate) = :year")
     List<GameList> findByGameReleaseYear(int year, Sort sort);
 
-    List<GameList> findByStatus(GameStatus status);
+    List<GameList> findByStatus(GameStatus status, Sort sort);
 
 }
