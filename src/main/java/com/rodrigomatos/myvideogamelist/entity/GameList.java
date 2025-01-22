@@ -1,15 +1,15 @@
 package com.rodrigomatos.myvideogamelist.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "game_list")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class GameList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +22,4 @@ public class GameList {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GameStatus status;
-
-    public GameList(Game game, GameStatus status) {
-        this.game = game;
-        this.status = status;
-    }
 }
