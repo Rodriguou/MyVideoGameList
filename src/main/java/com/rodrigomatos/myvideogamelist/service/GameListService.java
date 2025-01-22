@@ -73,7 +73,15 @@ public class GameListService {
     }
 
     public List<GameListDTO> getGameListByStatus(GameStatus status) {
-        return gameListMapper.toDTOList(gameListRepository.findByStatus(status));
+        return gameListMapper.toDTOList(
+                gameListRepository.findByStatus(
+                        status,
+                        Sort.by(
+                                Sort.Order.asc("game.name"),
+                                Sort.Order.asc("game.releaseDate")
+                        )
+                )
+        );
     }
 
     public GameListDTO getGameById(Long id) {
