@@ -4,6 +4,7 @@ import com.rodrigomatos.myvideogamelist.dto.GameListDTO;
 import com.rodrigomatos.myvideogamelist.entity.Game;
 import com.rodrigomatos.myvideogamelist.entity.GameList;
 import com.rodrigomatos.myvideogamelist.entity.GameStatus;
+import com.rodrigomatos.myvideogamelist.mapper.GameListMapper;
 import com.rodrigomatos.myvideogamelist.repository.GameListRepository;
 import com.rodrigomatos.myvideogamelist.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +18,20 @@ import java.util.List;
 public class GameListService {
     private final GameListRepository gameListRepository;
     private final GameRepository gameRepository;
+    private final GameListMapper gameListMapper;
 
     public GameListDTO addGameToList(GameListDTO gameListDTO) {
         Game game = gameRepository.findById(gameListDTO.gameId()).orElseThrow();
-
-        GameList gameList = new GameList(game, GameStatus.PENDING);
+        GameList gameList = GameList.builder()
+                .game(game)
+                .status(GameStatus.PENDING)
+                .build();
         gameList = gameListRepository.save(gameList);
-
-        return new GameListDTO(gameList.getId(), game.getId(), game.getName(), game.getReleaseDate(), gameList.getStatus());
+        return gameListMapper.toDTO(gameList);
     }
 
     public List<GameListDTO> getGameListSortedByName() {
-        return convertToDTOList(
+        return gameListMapper.toDTOList(
                 gameListRepository.findAll(Sort.by(
                         Sort.Order.asc("game.name"),
                         Sort.Order.asc("game.releaseDate")
@@ -37,7 +40,7 @@ public class GameListService {
     }
 
     public List<GameListDTO> getGameListSortedByReleaseDate() {
-        return convertToDTOList(
+        return gameListMapper.toDTOList(
                 gameListRepository.findAll(Sort.by(
                         Sort.Order.asc("game.releaseDate"),
                         Sort.Order.asc("game.name")
@@ -46,7 +49,7 @@ public class GameListService {
     }
 
     public List<GameListDTO> findGamesByName(String name) {
-        return convertToDTOList(
+        return gameListMapper.toDTOList(
                 gameListRepository.findByGameNameContainingIgnoreCase(
                         name,
                         Sort.by(
@@ -58,7 +61,7 @@ public class GameListService {
     }
 
     public List<GameListDTO> getGameListByReleaseYear(int year) {
-        return convertToDTOList(
+        return gameListMapper.toDTOList(
                 gameListRepository.findByGameReleaseYear(
                         year,
                         Sort.by(
@@ -70,33 +73,24 @@ public class GameListService {
     }
 
     public List<GameListDTO> getGameListByStatus(GameStatus status) {
-        return convertToDTOList(
-                gameListRepository.findByStatus(status)
-        );
+        return gameListMapper.toDTOList(gameListRepository.findByStatus(status));
     }
 
     public GameListDTO getGameById(Long id) {
         GameList gameList = gameListRepository.findById(id).orElseThrow();
-        return new GameListDTO(gameList.getId(), gameList.getGame().getId(), gameList.getGame().getName(), gameList.getGame().getReleaseDate(), gameList.getStatus());
+        return gameListMapper.toDTO(gameList);
     }
 
     public GameListDTO updateGameStatus(Long id, GameStatus status) {
         GameList gameList = gameListRepository.findById(id).orElseThrow();
         gameList.setStatus(status);
         gameList = gameListRepository.save(gameList);
-
-        return new GameListDTO(gameList.getId(), gameList.getGame().getId(), gameList.getGame().getName(), gameList.getGame().getReleaseDate(), gameList.getStatus());
+        return gameListMapper.toDTO(gameList);
     }
 
     public void removeGameFromList(Long id) {
         GameList game = gameListRepository.findById(id).orElseThrow();
         gameListRepository.delete(game);
-    }
-
-    private List<GameListDTO> convertToDTOList(List<GameList> gameList) {
-        return gameList.stream()
-                .map(game -> new GameListDTO(game.getId(), game.getGame().getId(), game.getGame().getName(), game.getGame().getReleaseDate(), game.getStatus()))
-                .toList();
     }
 
 }
