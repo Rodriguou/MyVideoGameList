@@ -22,15 +22,9 @@ public class GameController {
         return new ResponseEntity<>(createdGame, HttpStatus.CREATED);
     }
 
-    @GetMapping("sorted-by-name")
-    public ResponseEntity<List<GameDTO>> getAllGamesSortedByName() {
-        List<GameDTO> games = gameService.getAllGamesSortedByName();
-        return new ResponseEntity<>(games, HttpStatus.OK);
-    }
-
-    @GetMapping("sorted-by-release-date")
-    public ResponseEntity<List<GameDTO>> getAllGamesSortedByReleaseDate() {
-        List<GameDTO> games = gameService.getAllGamesSortedByReleaseDate();
+    @GetMapping
+    public ResponseEntity<List<GameDTO>> getGamesSortedBy(@RequestParam(defaultValue = "name") String sort) {
+        List<GameDTO> games = gameService.getGamesSortedBy(sort);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
