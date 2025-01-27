@@ -30,22 +30,19 @@ public class GameListService {
         return gameListMapper.toDTO(gameList);
     }
 
-    public List<GameListDTO> getGameListSortedByName() {
-        return gameListMapper.toDTOList(
-                gameListRepository.findAll(Sort.by(
-                        Sort.Order.asc("game.name"),
-                        Sort.Order.asc("game.releaseDate")
-                ))
-        );
-    }
-
-    public List<GameListDTO> getGameListSortedByReleaseDate() {
-        return gameListMapper.toDTOList(
-                gameListRepository.findAll(Sort.by(
-                        Sort.Order.asc("game.releaseDate"),
-                        Sort.Order.asc("game.name")
-                ))
-        );
+    public List<GameListDTO> getGameListSortedBy(String sort) {
+        Sort sorting = switch (sort.toLowerCase()) {
+            case "name" -> Sort.by(
+                    Sort.Order.asc("game.name"),
+                    Sort.Order.asc("game.releaseDate")
+            );
+            case "release-date" -> Sort.by(
+                    Sort.Order.asc("game.releaseDate"),
+                    Sort.Order.asc("game.name")
+            );
+            default -> Sort.by(Sort.Order.asc("id"));
+        };
+        return gameListMapper.toDTOList(gameListRepository.findAll(sorting));
     }
 
     public List<GameListDTO> findGamesByName(String name) {
