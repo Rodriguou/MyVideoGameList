@@ -2,6 +2,7 @@ package com.rodrigomatos.myvideogamelist.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -9,86 +10,74 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed for one or more fields.",
-                errors
+    public ResponseEntity<ProblemDetail> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed for one or more fields."
         );
+        problemDetail.setTitle("Invalid Request");
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        Map<String, String> errors = ex.getBindingResult().getAllErrors().stream()
+                .filter(FieldError.class::isInstance)
+                .map(FieldError.class::cast)
+                .filter(error -> error.getDefaultMessage() != null)
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+
+        problemDetail.setProperty("errors", errors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException() {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("request body", "The JSON structure is invalid or contains improperly formatted data.");
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "The request body is invalid or malformed.",
-                errors
+    public ResponseEntity<ProblemDetail> handleHttpMessageNotReadableException() {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "The JSON structure is invalid or contains improperly formatted data."
         );
+        problemDetail.setTitle("Malformed JSON Request");
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorResponse> handleNoSuchElementException() {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("path variable", "The specified ID does not exist.");
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                "The specified resource was not found.",
-                errors
+    public ResponseEntity<ProblemDetail> handleNoSuchElementException() {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                "The specified resource was not found."
         );
+        problemDetail.setTitle("Resource Not Found");
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException() {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("request body", "A game with this ID already exists in the list.");
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                "A conflict occurred while processing your request.",
-                errors
+    public ResponseEntity<ProblemDetail> handleDataIntegrityViolationException() {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                "A conflict occurred while processing your request."
         );
+        problemDetail.setTitle("Data Integrity Violation");
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException() {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("request", "The request contains invalid data.");
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Invalid request.",
-                errors
+    public ResponseEntity<ProblemDetail> handleIllegalArgumentException() {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Invalid request data."
         );
+        problemDetail.setTitle("Invalid Argument");
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
 }
