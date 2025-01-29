@@ -20,7 +20,6 @@ import java.util.List;
 public class GameListController {
     private final GameListService gameListService;
 
-
     @PostMapping
     @Operation(summary = "Add a game to the list")
     @ApiResponses({
