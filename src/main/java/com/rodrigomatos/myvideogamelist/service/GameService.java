@@ -70,11 +70,10 @@ public class GameService {
     }
 
     public GameDTO updateGame(Long id, GameDTO gameDTO) {
-        Game game = gameRepository.findById(id).orElseThrow();
-        game.setName(gameDTO.name().trim());
-        game.setReleaseDate(gameDTO.releaseDate());
-        game = gameRepository.save(game);
-        return gameMapper.toDTO(game);
+        Game existingGame = gameRepository.findById(id).orElseThrow();
+        gameMapper.updateFromDTO(gameDTO, existingGame);
+        Game updatedGame = gameRepository.save(existingGame);
+        return gameMapper.toDTO(updatedGame);
     }
 
     @Transactional
