@@ -25,7 +25,7 @@ public class GameService {
         return gameMapper.toDTO(game);
     }
 
-    public List<GameDTO> getGamesSortedBy(String sort) {
+    public List<GameDTO> getAllGamesSortedBy(String sort) {
         Sort sorting = switch (sort.toLowerCase()) {
             case "name" -> Sort.by(
                     Sort.Order.asc("name"),
@@ -40,7 +40,7 @@ public class GameService {
         return gameMapper.toDTOList(gameRepository.findAll(sorting));
     }
 
-    public List<GameDTO> findGamesByName(String name) {
+    public List<GameDTO> getGamesByName(String name) {
         return gameMapper.toDTOList(
                 gameRepository.findByNameContainingIgnoreCase(
                         name,
