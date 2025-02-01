@@ -4,6 +4,7 @@ import com.rodrigomatos.myvideogamelist.dto.GameDTO;
 import com.rodrigomatos.myvideogamelist.entity.Game;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -18,4 +19,7 @@ public interface GameMapper {
 
     List<GameDTO> toDTOList(List<Game> games);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "name", expression = "java(gameDTO.name().trim())")
+    void updateFromDTO(GameDTO gameDTO, @MappingTarget Game game);
 }
