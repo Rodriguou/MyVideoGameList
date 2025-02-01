@@ -3,6 +3,7 @@ package com.rodrigomatos.myvideogamelist.controller;
 import com.rodrigomatos.myvideogamelist.dto.GameDTO;
 import com.rodrigomatos.myvideogamelist.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -33,16 +34,19 @@ public class GameController {
     @GetMapping
     @Operation(summary = "Get all games sorted by a specific field")
     @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
-    public ResponseEntity<List<GameDTO>> getGamesSortedBy(@RequestParam String sort) {
-        List<GameDTO> games = gameService.getGamesSortedBy(sort);
+    public ResponseEntity<List<GameDTO>> getAllGamesSortedBy(
+            @Parameter(description = "Field to sort by. Use 'name' or 'release-date'.")
+            @RequestParam String sort
+    ) {
+        List<GameDTO> games = gameService.getAllGamesSortedBy(sort);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
     @GetMapping("search")
-    @Operation(summary = "Find games by name")
-    @ApiResponse(responseCode = "200", description = "Games successfully found")
-    public ResponseEntity<List<GameDTO>> findGamesByName(@RequestParam String name) {
-        List<GameDTO> games = gameService.findGamesByName(name);
+    @Operation(summary = "Get games by name")
+    @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
+    public ResponseEntity<List<GameDTO>> getGamesByName(@RequestParam String name) {
+        List<GameDTO> games = gameService.getGamesByName(name);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
