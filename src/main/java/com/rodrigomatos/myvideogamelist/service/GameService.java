@@ -21,23 +21,25 @@ public class GameService {
 
     public GameDTO addGame(GameDTO gameDTO) {
         Game newGame = gameMapper.toEntity(gameDTO);
-        newGame = gameRepository.save(newGame);
-        return gameMapper.toDTO(newGame);
+        return gameMapper.toDTO(gameRepository.save(newGame));
     }
 
     public List<GameDTO> getAllGamesSortedBy(String sort) {
-        Sort sorting = switch (sort.toLowerCase()) {
-            case "name" -> Sort.by(
-                    Sort.Order.asc("name"),
-                    Sort.Order.asc("releaseDate")
-            );
-            case "release-date" -> Sort.by(
-                    Sort.Order.asc("releaseDate"),
-                    Sort.Order.asc("name")
-            );
-            default -> Sort.by(Sort.Order.asc("id"));
-        };
-        return gameMapper.toDTOList(gameRepository.findAll(sorting));
+        return gameMapper.toDTOList(
+                gameRepository.findAll(
+                        switch (sort.toLowerCase()) {
+                            case "name" -> Sort.by(
+                                    Sort.Order.asc("name"),
+                                    Sort.Order.asc("releaseDate")
+                            );
+                            case "release-date" -> Sort.by(
+                                    Sort.Order.asc("releaseDate"),
+                                    Sort.Order.asc("name")
+                            );
+                            default -> Sort.by(Sort.Order.asc("id"));
+                        }
+                )
+        );
     }
 
     public List<GameDTO> getGamesByName(String name) {
