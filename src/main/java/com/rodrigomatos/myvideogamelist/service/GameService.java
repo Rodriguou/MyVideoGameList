@@ -20,9 +20,9 @@ public class GameService {
     private final GameMapper gameMapper;
 
     public GameDTO addGame(GameDTO gameDTO) {
-        Game game = gameMapper.toEntity(gameDTO);
-        game = gameRepository.save(game);
-        return gameMapper.toDTO(game);
+        Game newGame = gameMapper.toEntity(gameDTO);
+        newGame = gameRepository.save(newGame);
+        return gameMapper.toDTO(newGame);
     }
 
     public List<GameDTO> getAllGamesSortedBy(String sort) {
@@ -65,8 +65,8 @@ public class GameService {
     }
 
     public GameDTO getGameById(Long id) {
-        Game game = gameRepository.findById(id).orElseThrow();
-        return gameMapper.toDTO(game);
+        Game existingGame = gameRepository.findById(id).orElseThrow();
+        return gameMapper.toDTO(existingGame);
     }
 
     public GameDTO updateGame(Long id, GameDTO gameDTO) {
@@ -79,8 +79,8 @@ public class GameService {
     @Transactional
     public void deleteGame(Long id) {
         gameListRepository.deleteByGameId(id);
-        Game game = gameRepository.findById(id).orElseThrow();
-        gameRepository.delete(game);
+        Game existingGame = gameRepository.findById(id).orElseThrow();
+        gameRepository.delete(existingGame);
     }
 
 }
