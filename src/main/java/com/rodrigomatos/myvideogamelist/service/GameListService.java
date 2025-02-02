@@ -26,8 +26,7 @@ public class GameListService {
                 .game(game)
                 .status(GameStatus.PENDING)
                 .build();
-        gameList = gameListRepository.save(gameList);
-        return gameListMapper.toDTO(gameList);
+        return gameListMapper.toDTO(gameListRepository.save(gameList));
     }
 
     public List<GameListDTO> getGameListSortedBy(String sort) {
