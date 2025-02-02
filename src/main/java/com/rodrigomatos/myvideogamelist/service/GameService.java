@@ -25,45 +25,15 @@ public class GameService {
     }
 
     public List<GameDTO> getAllGamesSortedBy(String sort) {
-        return gameMapper.toDTOList(
-                gameRepository.findAll(
-                        switch (sort.toLowerCase()) {
-                            case "name" -> Sort.by(
-                                    Sort.Order.asc("name"),
-                                    Sort.Order.asc("releaseDate")
-                            );
-                            case "release-date" -> Sort.by(
-                                    Sort.Order.asc("releaseDate"),
-                                    Sort.Order.asc("name")
-                            );
-                            default -> Sort.by(Sort.Order.asc("id"));
-                        }
-                )
-        );
+        return gameMapper.toDTOList(gameRepository.findAll(getSortByField(sort)));
     }
 
     public List<GameDTO> getGamesByName(String name) {
-        return gameMapper.toDTOList(
-                gameRepository.findByNameContainingIgnoreCase(
-                        name,
-                        Sort.by(
-                                Sort.Order.asc("name"),
-                                Sort.Order.asc("releaseDate")
-                        )
-                )
-        );
+        return gameMapper.toDTOList(gameRepository.findByNameContainingIgnoreCase(name, getSortByField("name")));
     }
 
     public List<GameDTO> getGamesByReleaseYear(int year) {
-        return gameMapper.toDTOList(
-                gameRepository.findByReleaseYear(
-                        year,
-                        Sort.by(
-                                Sort.Order.asc("releaseDate"),
-                                Sort.Order.asc("name")
-                        )
-                )
-        );
+        return gameMapper.toDTOList(gameRepository.findByReleaseYear(year, getSortByField("release-date")));
     }
 
     public GameDTO getGameById(Long id) {
@@ -83,6 +53,20 @@ public class GameService {
         gameListRepository.deleteByGameId(id);
         Game existingGame = gameRepository.findById(id).orElseThrow();
         gameRepository.delete(existingGame);
+    }
+
+    private Sort getSortByField(String sort) {
+        return switch (sort.toLowerCase()) {
+            case "name" -> Sort.by(
+                    Sort.Order.asc("name"),
+                    Sort.Order.asc("releaseDate")
+            );
+            case "release-date" -> Sort.by(
+                    Sort.Order.asc("releaseDate"),
+                    Sort.Order.asc("name")
+            );
+            default -> Sort.by(Sort.Order.asc("id"));
+        };
     }
 
 }
