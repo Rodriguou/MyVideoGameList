@@ -43,7 +43,7 @@ public class GameListController {
     @Operation(summary = "Find games in the list by name")
     @ApiResponse(responseCode = "200", description = "Games successfully found")
     public ResponseEntity<List<GameListDTO>> findGamesByName(@RequestParam String name) {
-        List<GameListDTO> gameList = gameListService.findGamesByName(name);
+        List<GameListDTO> gameList = gameListService.getGamesByName(name);
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
@@ -51,7 +51,7 @@ public class GameListController {
     @Operation(summary = "Get games in the list by release year")
     @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
     public ResponseEntity<List<GameListDTO>> getGameListByReleaseYear(@PathVariable("year") int year) {
-        List<GameListDTO> gameList = gameListService.getGameListByReleaseYear(year);
+        List<GameListDTO> gameList = gameListService.getGamesByReleaseYear(year);
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
@@ -62,7 +62,7 @@ public class GameListController {
             @ApiResponse(responseCode = "400", description = "Invalid status value")
     })
     public ResponseEntity<List<GameListDTO>> getGameListByStatus(@PathVariable("status") String status) {
-        List<GameListDTO> gameList = gameListService.getGameListByStatus(GameStatus.valueOf(status.toUpperCase()));
+        List<GameListDTO> gameList = gameListService.getGamesByStatus(GameStatus.valueOf(status.toUpperCase()));
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 

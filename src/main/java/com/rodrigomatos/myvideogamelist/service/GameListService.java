@@ -21,12 +21,12 @@ public class GameListService {
     private final GameListMapper gameListMapper;
 
     public GameListDTO addGameToList(GameListDTO gameListDTO) {
-        Game game = gameRepository.findById(gameListDTO.gameId()).orElseThrow();
-        GameList gameList = GameList.builder()
-                .game(game)
+        Game existingGame = gameRepository.findById(gameListDTO.gameId()).orElseThrow();
+        GameList game = GameList.builder()
+                .game(existingGame)
                 .status(GameStatus.PENDING)
                 .build();
-        return gameListMapper.toDTO(gameListRepository.save(gameList));
+        return gameListMapper.toDTO(gameListRepository.save(game));
     }
 
     public List<GameListDTO> getGameListSortedBy(String sort) {
@@ -34,36 +34,36 @@ public class GameListService {
         return gameListMapper.toDTOList(gameList);
     }
 
-    public List<GameListDTO> findGamesByName(String name) {
+    public List<GameListDTO> getGamesByName(String name) {
         List<GameList> gameList = gameListRepository.findByGameNameContainingIgnoreCase(name, getSortByField("name"));
         return gameListMapper.toDTOList(gameList);
     }
 
-    public List<GameListDTO> getGameListByReleaseYear(int year) {
+    public List<GameListDTO> getGamesByReleaseYear(int year) {
         List<GameList> gameList = gameListRepository.findByGameReleaseYear(year, getSortByField("release-date"));
         return gameListMapper.toDTOList(gameList);
     }
 
-    public List<GameListDTO> getGameListByStatus(GameStatus status) {
+    public List<GameListDTO> getGamesByStatus(GameStatus status) {
         List<GameList> gameList = gameListRepository.findByStatus(status, getSortByField("name"));
         return gameListMapper.toDTOList(gameList);
     }
 
     public GameListDTO getGameById(Long id) {
-        GameList gameList = gameListRepository.findById(id).orElseThrow();
-        return gameListMapper.toDTO(gameList);
+        GameList listedGame = gameListRepository.findById(id).orElseThrow();
+        return gameListMapper.toDTO(listedGame);
     }
 
     public GameListDTO updateGameStatus(Long id, GameStatus status) {
-        GameList gameList = gameListRepository.findById(id).orElseThrow();
-        gameList.setStatus(status);
-        gameList = gameListRepository.save(gameList);
-        return gameListMapper.toDTO(gameList);
+        GameList listedGame = gameListRepository.findById(id).orElseThrow();
+        listedGame.setStatus(status);
+        listedGame = gameListRepository.save(listedGame);
+        return gameListMapper.toDTO(listedGame);
     }
 
     public void removeGameFromList(Long id) {
-        GameList game = gameListRepository.findById(id).orElseThrow();
-        gameListRepository.delete(game);
+        GameList listedGame = gameListRepository.findById(id).orElseThrow();
+        gameListRepository.delete(listedGame);
     }
 
     private Sort getSortByField(String sort) {
