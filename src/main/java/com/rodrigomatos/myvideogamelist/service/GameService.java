@@ -25,15 +25,18 @@ public class GameService {
     }
 
     public List<GameDTO> getAllGamesSortedBy(String sort) {
-        return gameMapper.toDTOList(gameRepository.findAll(getSortByField(sort)));
+        List<Game> games = gameRepository.findAll(getSortByField(sort));
+        return gameMapper.toDTOList(games);
     }
 
     public List<GameDTO> getGamesByName(String name) {
-        return gameMapper.toDTOList(gameRepository.findByNameContainingIgnoreCase(name, getSortByField("name")));
+        List<Game> games = gameRepository.findByNameContainingIgnoreCase(name, getSortByField("name"));
+        return gameMapper.toDTOList(games);
     }
 
     public List<GameDTO> getGamesByReleaseYear(int year) {
-        return gameMapper.toDTOList(gameRepository.findByReleaseYear(year, getSortByField("release-date")));
+        List<Game> games = gameRepository.findByReleaseYear(year, getSortByField("release-date"));
+        return gameMapper.toDTOList(games);
     }
 
     public GameDTO getGameById(Long id) {
