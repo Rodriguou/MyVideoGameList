@@ -31,54 +31,23 @@ public class GameListService {
     }
 
     public List<GameListDTO> getGameListSortedBy(String sort) {
-        Sort sorting = switch (sort.toLowerCase()) {
-            case "name" -> Sort.by(
-                    Sort.Order.asc("game.name"),
-                    Sort.Order.asc("game.releaseDate")
-            );
-            case "release-date" -> Sort.by(
-                    Sort.Order.asc("game.releaseDate"),
-                    Sort.Order.asc("game.name")
-            );
-            default -> Sort.by(Sort.Order.asc("id"));
-        };
-        return gameListMapper.toDTOList(gameListRepository.findAll(sorting));
+        List<GameList> gameList = gameListRepository.findAll(getSortByField(sort));
+        return gameListMapper.toDTOList(gameList);
     }
 
     public List<GameListDTO> findGamesByName(String name) {
-        return gameListMapper.toDTOList(
-                gameListRepository.findByGameNameContainingIgnoreCase(
-                        name,
-                        Sort.by(
-                                Sort.Order.asc("game.name"),
-                                Sort.Order.asc("game.releaseDate")
-                        )
-                )
-        );
+        List<GameList> gameList = gameListRepository.findByGameNameContainingIgnoreCase(name, getSortByField("name"));
+        return gameListMapper.toDTOList(gameList);
     }
 
     public List<GameListDTO> getGameListByReleaseYear(int year) {
-        return gameListMapper.toDTOList(
-                gameListRepository.findByGameReleaseYear(
-                        year,
-                        Sort.by(
-                                Sort.Order.asc("game.releaseDate"),
-                                Sort.Order.asc("game.name")
-                        )
-                )
-        );
+        List<GameList> gameList = gameListRepository.findByGameReleaseYear(year, getSortByField("release-date"));
+        return gameListMapper.toDTOList(gameList);
     }
 
     public List<GameListDTO> getGameListByStatus(GameStatus status) {
-        return gameListMapper.toDTOList(
-                gameListRepository.findByStatus(
-                        status,
-                        Sort.by(
-                                Sort.Order.asc("game.name"),
-                                Sort.Order.asc("game.releaseDate")
-                        )
-                )
-        );
+        List<GameList> gameList = gameListRepository.findByStatus(status, getSortByField("name"));
+        return gameListMapper.toDTOList(gameList);
     }
 
     public GameListDTO getGameById(Long id) {
@@ -96,6 +65,20 @@ public class GameListService {
     public void removeGameFromList(Long id) {
         GameList game = gameListRepository.findById(id).orElseThrow();
         gameListRepository.delete(game);
+    }
+
+    private Sort getSortByField(String sort) {
+        return switch (sort.toLowerCase()) {
+            case "name" -> Sort.by(
+                    Sort.Order.asc("game.name"),
+                    Sort.Order.asc("game.releaseDate")
+            );
+            case "release-date" -> Sort.by(
+                    Sort.Order.asc("game.releaseDate"),
+                    Sort.Order.asc("game.name")
+            );
+            default -> Sort.by(Sort.Order.asc("id"));
+        };
     }
 
 }
