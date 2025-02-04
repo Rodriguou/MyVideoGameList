@@ -68,7 +68,7 @@ public class GameListService {
     private Sort getSortByField(String sort) {
         return switch (sort.toLowerCase()) {
             case "name" -> Sort.by(
-                    Sort.Order.asc("gameId"),
+                    Sort.Order.asc("gameName"),
                     Sort.Order.asc("gameReleaseDate")
             );
             case "release-date" -> Sort.by(
