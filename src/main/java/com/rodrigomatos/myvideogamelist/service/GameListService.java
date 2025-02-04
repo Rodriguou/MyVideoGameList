@@ -24,7 +24,6 @@ public class GameListService {
         Game existingGame = gameRepository.findById(gameListDTO.gameId()).orElseThrow();
         GameList game = GameList.builder()
                 .game(existingGame)
-                .status(GameStatus.PENDING)
                 .build();
         return gameListMapper.toDTO(gameListRepository.save(game));
     }

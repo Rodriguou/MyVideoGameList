@@ -21,5 +21,6 @@ public class GameList {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GameStatus status;
+    @Builder.Default
+    private GameStatus status = GameStatus.PENDING;
 }
