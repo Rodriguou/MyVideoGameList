@@ -23,16 +23,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "Validation failed for one or more fields."
         );
-        problemDetail.setTitle("Invalid Request");
-
+        problemDetail.setTitle("Method Argument Not Valid");
         Map<String, String> errors = ex.getBindingResult().getAllErrors().stream()
                 .filter(FieldError.class::isInstance)
                 .map(FieldError.class::cast)
                 .filter(error -> error.getDefaultMessage() != null)
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-
         problemDetail.setProperty("errors", errors);
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
@@ -42,8 +39,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "The JSON structure is invalid or contains improperly formatted data."
         );
-        problemDetail.setTitle("Malformed JSON Request");
-
+        problemDetail.setTitle("HTTP Message Not Readable");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
@@ -53,8 +49,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 "The specified resource was not found."
         );
-        problemDetail.setTitle("Resource Not Found");
-
+        problemDetail.setTitle("No Such Element");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
@@ -65,7 +60,6 @@ public class GlobalExceptionHandler {
                 "A conflict occurred while processing your request."
         );
         problemDetail.setTitle("Data Integrity Violation");
-
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
@@ -75,8 +69,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "Invalid request data."
         );
-        problemDetail.setTitle("Invalid Argument");
-
+        problemDetail.setTitle("Illegal Argument");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
