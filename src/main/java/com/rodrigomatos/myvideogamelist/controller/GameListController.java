@@ -4,6 +4,7 @@ import com.rodrigomatos.myvideogamelist.dto.GameListDTO;
 import com.rodrigomatos.myvideogamelist.entity.GameStatus;
 import com.rodrigomatos.myvideogamelist.service.GameListService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -34,15 +35,18 @@ public class GameListController {
     @GetMapping
     @Operation(summary = "Get all games in the list sorted by a specific field")
     @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
-    public ResponseEntity<List<GameListDTO>> getGameListSortedBy(@RequestParam String sort) {
+    public ResponseEntity<List<GameListDTO>> getGameListSortedBy(
+            @Parameter(description = "Field to sort by. Use 'name' or 'release-date'.")
+            @RequestParam String sort
+    ) {
         List<GameListDTO> gameList = gameListService.getGameListSortedBy(sort);
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
     @GetMapping("search")
-    @Operation(summary = "Find games in the list by name")
-    @ApiResponse(responseCode = "200", description = "Games successfully found")
-    public ResponseEntity<List<GameListDTO>> findGamesByName(@RequestParam String name) {
+    @Operation(summary = "Get games in the list by name")
+    @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
+    public ResponseEntity<List<GameListDTO>> getGamesByName(@RequestParam String name) {
         List<GameListDTO> gameList = gameListService.getGamesByName(name);
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
@@ -50,18 +54,21 @@ public class GameListController {
     @GetMapping("year/{year}")
     @Operation(summary = "Get games in the list by release year")
     @ApiResponse(responseCode = "200", description = "Games successfully retrieved")
-    public ResponseEntity<List<GameListDTO>> getGameListByReleaseYear(@PathVariable("year") int year) {
+    public ResponseEntity<List<GameListDTO>> getGamesByReleaseYear(@PathVariable("year") int year) {
         List<GameListDTO> gameList = gameListService.getGamesByReleaseYear(year);
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
     @GetMapping("status/{status}")
-    @Operation(summary = "Get games in the list by their status")
+    @Operation(summary = "Get games in the list by status")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Games successfully retrieved"),
             @ApiResponse(responseCode = "400", description = "Invalid status value")
     })
-    public ResponseEntity<List<GameListDTO>> getGameListByStatus(@PathVariable("status") String status) {
+    public ResponseEntity<List<GameListDTO>> getGamesByStatus(
+            @Parameter(description = "Status value. Use 'pending', 'incomplete', or 'complete'.")
+            @PathVariable("status") String status
+    ) {
         List<GameListDTO> gameList = gameListService.getGamesByStatus(GameStatus.valueOf(status.toUpperCase()));
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
@@ -77,14 +84,18 @@ public class GameListController {
         return new ResponseEntity<>(gameList, HttpStatus.OK);
     }
 
-    @Operation(summary = "Update the status of a game in the list")
+    @Operation(summary = "Update the status of a game in the list by its ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Game status successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "404", description = "Game not found")
     })
     @PatchMapping("{id}")
-    public ResponseEntity<GameListDTO> updateGameStatus(@PathVariable("id") Long id, @RequestParam String status) {
+    public ResponseEntity<GameListDTO> updateGameStatus(
+            @PathVariable("id") Long id,
+            @Parameter(description = "New status value. Use 'pending', 'incomplete', or 'complete'.")
+            @RequestParam String status
+    ) {
         GameListDTO updatedGameList = gameListService.updateGameStatus(id, GameStatus.valueOf(status.toUpperCase()));
         return new ResponseEntity<>(updatedGameList, HttpStatus.OK);
     }
