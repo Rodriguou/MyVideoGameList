@@ -57,8 +57,8 @@ public class GameListService {
     public GameListDTO updateGameStatus(Long id, GameStatus status) {
         GameList listedGame = gameListRepository.findById(id).orElseThrow();
         listedGame.setStatus(status);
-        listedGame = gameListRepository.save(listedGame);
-        return gameListMapper.toDTO(listedGame);
+        GameList updatedListedGame = gameListRepository.save(listedGame);
+        return gameListMapper.toDTO(updatedListedGame);
     }
 
     public void removeGameFromList(Long id) {
@@ -69,12 +69,12 @@ public class GameListService {
     private Sort getSortByField(String sort) {
         return switch (sort.toLowerCase()) {
             case "name" -> Sort.by(
-                    Sort.Order.asc("game.name"),
-                    Sort.Order.asc("game.releaseDate")
+                    Sort.Order.asc("gameId"),
+                    Sort.Order.asc("gameReleaseDate")
             );
             case "release-date" -> Sort.by(
-                    Sort.Order.asc("game.releaseDate"),
-                    Sort.Order.asc("game.name")
+                    Sort.Order.asc("gameReleaseDate"),
+                    Sort.Order.asc("gameName")
             );
             default -> Sort.by(Sort.Order.asc("id"));
         };
